@@ -121,7 +121,7 @@ async function binUpload(report: IReport): Promise<{ id: string, url: string }> 
   });
   const adata: AData = [
     [iv.toString('base64'), salt.toString('base64'),
-     ITERATIONS, KEY_SIZE, 128, 'aes', 'gcm', 'zlib'],
+      ITERATIONS, KEY_SIZE, 128, 'aes', 'gcm', 'zlib'],
     'markdown', 1, 0];
   cipher.setAAD(Buffer.from(JSON.stringify(adata), 'utf8'));
   const request: IPrivateBinRequest = {

@@ -59,7 +59,7 @@ async function listFiles(modPath: string): Promise<IEntry[]> {
   } catch (err) {
     if (['ENOTFOUND', 'ENOENT'].indexOf(err.code) === -1) {
       log('error', 'Failed to list files',
-        { path: modPath, error: err.message });
+          { path: modPath, error: err.message });
     }
   }
 
@@ -111,7 +111,7 @@ async function fileReport(api: types.IExtensionApi,
   };
 
   const conlim = new util.ConcurrencyLimiter(50,
-    (err: Error) => ['EMFILE', 'EBADF'].includes(err['code']));
+                                             (err: Error) => ['EMFILE', 'EBADF'].includes(err['code']));
   return Promise.all(fileListFiles
     .map(async (entry: IEntry): Promise<IFileEntry> => {
       const relPath = path.relative(modPath, entry.filePath);
@@ -256,19 +256,19 @@ async function createReportImpl(api: types.IExtensionApi,
         result.loadOrder = (((Array.isArray(loadOrder))
           ? (loadOrder)
           : Object.keys(loadOrder)) || []).map((entry, idx) => ({
-              name: typeof(entry) === 'string'
-                ? entry
-                : entry.name,
-              pos: typeof(entry) === 'string'
-                ? idx
-                : (entry as any)?.pos || idx,
+          name: typeof(entry) === 'string'
+            ? entry
+            : entry.name,
+          pos: typeof(entry) === 'string'
+            ? idx
+            : (entry as any)?.pos || idx,
               // KCD and Spyro (probably others too) do not include the
               //  enabled property; in their case, merely their presence in the LO
               //  suggests that the mod is enabled.
-              enabled: entry?.enabled || true,
-              locked: entry?.locked,
-              external: entry?.external,
-            }))
+          enabled: entry?.enabled || true,
+          locked: entry?.locked,
+          external: entry?.external,
+        }))
           .sort((lhs, rhs) => lhs.pos - rhs.pos);
       }
     }
@@ -397,22 +397,22 @@ async function createReport(api: types.IExtensionApi, modId: string, gameId?: st
 
 function init(context: types.IExtensionContext) {
   context.registerAction('mods-action-icons', 250, 'report', {}, 'Create Report',
-    (instanceIds: string[]) => {
-      createReport(context.api, instanceIds[0]);
-    }, (instanceIds: string[]) => {
-      const state = context.api.getState();
-      const gameMode = selectors.activeGameId(state);
-      return state.persistent.mods[gameMode]?.[instanceIds[0]] !== undefined;
-    });
+                         (instanceIds: string[]) => {
+                           createReport(context.api, instanceIds[0]);
+                         }, (instanceIds: string[]) => {
+                           const state = context.api.getState();
+                           const gameMode = selectors.activeGameId(state);
+                           return state.persistent.mods[gameMode]?.[instanceIds[0]] !== undefined;
+                         });
   context.once(() => {
     context.api.events.on('display-report',
-      (modId: string, gameId?: string, options?: IReportOptions) => {
-        const state = context.api.getState();
-        if (gameId === undefined) {
-          gameId = selectors.activeGameId(state);
-        }
-        displayReport(context.api, modId, gameId, options);
-      });
+                          (modId: string, gameId?: string, options?: IReportOptions) => {
+                            const state = context.api.getState();
+                            if (gameId === undefined) {
+                              gameId = selectors.activeGameId(state);
+                            }
+                            displayReport(context.api, modId, gameId, options);
+                          });
   });
 }
 
